@@ -1,0 +1,10 @@
+[package]
+name = "gentz"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies.zoneinfo_compiled]
+version = "0.5.1"
+
+[lints]
+workspace = true

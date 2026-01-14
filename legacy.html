@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Hyperclock</title>
+	<link rel=stylesheet href="https://michael.malinov.com/asset/res/font/iosevka-fuck.css">
+	<style>
+		:root {
+			font-family: "Iosevka Fuck Web";
+			line-height: 1;
+			background-color: black;
+			color: white;
+			height: 100%;
+		}
+		body {
+			cursor: none;
+			height: 100%;
+			margin: 0;
+			overflow: hidden;
+		}
+		nav {
+			padding: 1em;
+			background-color: white;
+			color: black;
+			cursor: default;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+		button {
+			font: inherit;
+		}
+		table {
+			user-select: none;
+			text-wrap: nowrap;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			/*transform: translate(-50%, -50%) scaleY(0.8888888888888889);*/
+			transform: translate(-50%, -50%);
+			font-weight: 100;
+			border-collapse: collapse;
+			/* pi composite specific */
+			/*margin-top: 1vh;*/
+		}
+		td, th {
+			padding: 0;
+		}
+		th {
+			font-weight: 100;
+			font-size: 1em;
+			text-align: left;
+		}
+		.short3 {
+			font-size: 0.75em;
+			vertical-align: bottom;
+			text-align: left;
+			transform: translateY(-0.4em);
+		}
+		.short3, .title {
+			color: #00f;
+		}
+		td {
+			color: #07f;
+			text-align: right;
+			font-size: 3em;
+		}
+		th, .narrow, .right:not(#tz_sign) {
+			color: #00f;
+		}
+		.short1 {
+			font-size: 2.4em;
+			vertical-align: bottom;
+		}
+		.short2 {
+			font-size: 1.5em;
+		}
+		#wave {
+			float: right;
+			width: 0.75em;
+			height: 0.69em;
+			overflow: hidden;
+		}
+		.right {
+			text-align: right;
+		}
+		.narrow {
+			max-width: calc(1em / 6);
+			transform: translateX(calc(-1em / 6));
+		}
+		/*.title_row {
+			display: none;
+		}*/
+	</style>
+</head>
+<body>
+	<table id=box onclick=b_config()>
+		<tr class=title_row>
+			<th colspan=2 class=title>date</th>
+			<th>year</th>
+			<th></th>
+			<th>month</th>
+			<th></th>
+			<th style=text-align:center>day</th>
+			<th></th>
+			<th class=right>&nbsp;name</th>
+		</tr>
+		<tr>
+			<td colspan=3 rowspan=2 id=year>////</td>
+			<td rowspan=2 class=narrow>&centerdot;</td>
+			<td rowspan=2 id=month>//</td>
+			<td rowspan=2 class=narrow>&centerdot;</td>
+			<td rowspan=2 id=day>//</td>
+			<td rowspan=2 class=narrow>&ratio;</td>
+			<td class=short2 id=month_name>///</td>
+		</tr>
+		<tr>
+			<td class=short2 id=day_name>///</td>
+		</tr>
+		<tr class=title_row>
+			<th colspan=2 class=title>time</th>
+			<th>hour</th>
+			<th></th>
+			<th>minute</th>
+			<th></th>
+			<th>second</th>
+			<th></th>
+			<th class=right>wave</th>
+		</tr>
+		<tr>
+			<td colspan=2 class=right>&nbsp;T</td>
+			<td id=hour>//</td>
+			<td class=narrow>&ratio;</td>
+			<td id=minute>//</td>
+			<td class=narrow>&ratio;</td>
+			<td id=second>//</td>
+			<td class=narrow>.</td>
+			<td><div id="wave">
+				<svg viewBox="0 0 75 400" role="img">
+					<path d="M3 3l69 69-69 69 69 69-69 69" fill=none stroke=#07f stroke-width=4 />
+				</svg>
+			</div></td>
+		</tr>
+		<tr class=title_row>
+			<th colspan=2 class=title>zone</th>
+			<th>hour</th>
+			<th></th>
+			<th>minute</th>
+			<th colspan=4 class=right>zone</th>
+		</tr>
+		<tr>
+			<td class=short3 id=c_fps>///</td>
+			<td class=right id=tz_sign>/</td>
+			<td id=tz_hour>//</td>
+			<td class=narrow>&ratio;</td>
+			<td id=tz_minute>//</td>
+			<td class=narrow>.</td>
+			<td colspan=3 class=short1 id=tz_name>/////</td>
+		</tr>
+	</table>
+	<nav id=cfg style=display:none>
+		setup<br>
+		<button onclick=b_fullscreen()>fullscreen</button>
+		<button onclick="location=location">reload</button>
+		<button onclick=b_pause()>pause/play</button>
+		<!--<br>fps: <span id=c_fps></span>-->
+		<br>debug: <span id=c_dbg></span>
+	</nav>
+	<script src="tzabbr.js"></script>
+	<script>
+		// defs
+		function b_config() {
+			window.cfg.style.display = { "none": "block", "block": "none" }[window.cfg.style.display];
+		}
+		function b_fullscreen() {
+			if (!document.fullscreenElement) {
+				document.body.requestFullscreen({ navigationUI: "hide" });
+			} else {
+				document.exitFullscreen();
+			}
+		}
+		function str(n, d) {
+			return n.toString().padStart(d, "0");
+		}
+		const day_names = "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(",");
+		const month_names = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(",");
+		// vars
+		const wave = window.wave;
+		const elm = [
+			window.year,
+			window.month,
+			window.day,
+			window.month_name,
+			window.day_name,
+			window.hour,
+			window.minute,
+			window.second,
+			window.tz_sign,
+			window.tz_hour,
+			window.tz_minute,
+			window.tz_name,
+		];
+		const prev = new Array(elm.length);
+		//const prev_frames = [0];
+		let frame_count = 1;
+		let scale = 1;
+		let pt = 0;
+		let ptz = [null, null];
+		let running = true;
+		let table_dim = [16, 12];
+		function b_pause() {
+			if (running = !running)
+				requestAnimationFrame(frame);
+		}
+		window.onresize = function() {
+			frame_count = 0;
+		}
+		// frame
+		function frame(t) {
+			t /= 1000;
+			window.c_fps.innerText = str(Math.round(1 / (t - pt)), 3);
+			pt = t;
+			//window.c_fps.innerText = str(prev_frames.length, 3);
+			//window.c_fps.innerText = str(Math.round(prev_frames.length / (t - prev_frames[0])), 3);
+			//prev_frames.push(t);
+			//var cutoff = t - 1;
+			//for (var i = 0; i < prev_frames.length; ++i) {
+			//	if (prev_frames[i] >= cutoff) {
+			//		prev_frames.splice(0, i);
+			//		break;
+			//	}
+			//}
+			if (frame_count-- === 0) {
+				frame_count = 99;
+				let win = document.body.getBoundingClientRect();
+				win = [win.width, win.height];
+				if (win[0] === 0 || win[1] === 0) win = [window.innerWidth, window.innerHeight];
+				//win[0] -= 20;
+				//win[1] -= 20;
+				window.c_dbg.innerText = win;
+				const new_scale = Math.min(win[0] / table_dim[0], win[1] / table_dim[1]);
+				if (new_scale != scale) {
+					scale = new_scale;
+					window.box.style.fontSize = new_scale + "px";
+				}
+			}
+			const time = new Date();
+			wave.scrollTop = scale / 100 + scale * ((750 - time.getMilliseconds()) % 1000 + 250) * 0.00414;
+			const month = time.getMonth();
+			const tz = -time.getTimezoneOffset();
+			const tz_mag = Math.abs(tz);
+			//const tz_name = time.toLocaleDateString("en-us", { day: "2-digit", timeZoneName: "short" }).substring(4);
+			const tz_full = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			if (tz_full != ptz[0])
+				ptz = [tz_full, tzabbr[tz_full][tz * 60] ?? "¬name"];
+			const tz_name = ptz[1];
+			const parts = [
+				str(time.getFullYear(), 4),
+				str(month + 1, 2),
+				str(time.getDate(), 2),
+				month_names[month],
+				day_names[time.getDay()],
+				str(time.getHours(), 2),
+				str(time.getMinutes(), 2),
+				str(time.getSeconds(), 2),
+				tz < 0 ? "-" : tz > 0 ? "+" : "±",
+				str(Math.floor(tz_mag / 60), 2),
+				str(tz_mag % 60, 2),
+				tz_name.padStart(5, "\xA0"),
+				//tz_name.length > 5 ? "¬N" : tz_name.padStart(5, "\xA0"),
+			];
+			for (let i = 0; i < parts.length; ++i)
+				if (parts[i] != prev[i])
+					elm[i].innerText = prev[i] = parts[i];
+			if (running)
+				requestAnimationFrame(frame);
+		}
+		requestAnimationFrame(frame);
+	</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+[package]
+name = "als-host"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies.clap]
+version = "4.5.54"
+features = ["derive"]
+
+[dependencies.serial]
+version = "0.4.0"
+
+[dependencies.anyhow]
+version = "1.0.100"
+
+[lints]
+workspace = true
