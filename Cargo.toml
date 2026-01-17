@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = [ "als-host", "gentz" ]
+members = ["als-camera", "als-host", "gentz" ]
 [workspace.lints.rust]
 # missing_docs = "deny"
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rust_analyzer)'] }

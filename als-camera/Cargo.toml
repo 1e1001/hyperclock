@@ -1,0 +1,14 @@
+[package]
+name = "als-camera"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies.clap]
+version = "4.5.54"
+features = ["derive"]
+
+[dependencies.rscam]
+version = "0.5.5"
+
+[lints]
+workspace = true
