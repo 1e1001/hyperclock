@@ -14,7 +14,12 @@ use std::thread::sleep;
 use std::time::Duration;
 
 use clap::Parser;
-use rscam::{Camera, Config};
+use v4l::buffer::Type;
+use v4l::io::mmap::Stream;
+use v4l::io::traits::CaptureStream;
+use v4l::video::Capture;
+use v4l::video::capture::Parameters;
+use v4l::{Device, FourCC, Fraction};
 
 /// webcam-based ambient light sensor.
 /// This does not send any camera controls (manual focus), so do that manually.
@@ -70,31 +75,31 @@ fn main() {
 		.append(true)
 		.open(backlight_path.join("brightness"))
 		.expect("failed to open brightness");
-	let mut camera = Camera::new(&video_path).unwrap();
+	let camera = Device::with_path(&video_path).unwrap();
 	let (vf_resolution, vf_interval) = video_format.split_once('@').expect("vf bad parts");
 	let (resolution_w, resolution_h) = vf_resolution.split_once('x').expect("vf bad resolution");
 	let (interval_n, interval_d) = vf_interval.split_once('/').expect("vf bad interval");
-	let resolution = (
-		resolution_w.parse().expect("vf bad width"),
-		resolution_h.parse().expect("vf bad height"),
-	);
+	let resolution_w = resolution_w.parse().expect("vf bad width");
+	let resolution_h = resolution_h.parse().expect("vf bad height");
+	let mut fmt = camera.format().unwrap();
+	fmt.width = resolution_w;
+	fmt.height = resolution_h;
+	fmt.fourcc = FourCC::new(b"YUYV");
+	println!("{:?}", camera.set_format(&fmt).unwrap());
 	camera
-		.start(&Config {
-			interval: (
-				interval_n.parse().expect("vf bad width"),
-				interval_d.parse().expect("vf bad height"),
-			),
-			resolution,
-			format: b"YUYV",
-			..Default::default()
-		})
+		.set_params(&Parameters::new(Fraction::new(
+			interval_n.parse().expect("vf bad width"),
+			interval_d.parse().expect("vf bad height"),
+		)))
 		.unwrap();
-	let max_sum = (resolution.0 * resolution.1 * 255) as f32;
-	println!("max backlight {screen_max:?}, max sum {max_sum:?}");
+	let sum_max = (resolution_w * resolution_h * 255) as f32;
+	// why four?
+	let mut stream = Stream::with_buffers(&camera, Type::VideoCapture, 4).unwrap();
+	println!("max backlight {screen_max:?}, max sum {sum_max:?}");
 	let mut prev_time = 0;
 	let mut prev_status = false;
 	loop {
-		let frame = match camera.capture() {
+		let (frame, meta) = match stream.next() {
 			Ok(frame) => frame,
 			Err(err) => {
 				println!("Read error: {err}");
@@ -103,10 +108,14 @@ fn main() {
 				continue;
 			}
 		};
-		let time = frame.get_timestamp();
+		let time = meta
+			.timestamp
+			.sec
+			.wrapping_mul(1_000_000)
+			.wrapping_add(meta.timestamp.usec);
 		// if the frame ever has more than 2²⁴ pixels, this won't work
-		let sum = frame_sum(&frame);
-		let light = sum as f32 / max_sum;
+		let sum = frame_sum(frame);
+		let light = sum as f32 / sum_max;
 		let dt = time - replace(&mut prev_time, time);
 		let mapped_light = (((light.clamp(light_min, light_max) - light_min)
 			/ (light_max - light_min))
@@ -124,7 +133,9 @@ fn main() {
 		if prev_status {
 			print!("\x1b[A\x1b[K");
 		}
-		println!("{dt:6}µs, raw={light:.4}, mapped={mapped_pct:.3} ({mapped_light}/{screen_max})");
+		println!(
+			"{dt:6}µs, raw={light:.4} ({sum}/{sum_max}), mapped={mapped_pct:.4} ({mapped_light}/{screen_max})"
+		);
 		prev_status = true;
 	}
 }

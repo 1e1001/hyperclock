@@ -7,8 +7,8 @@ edition = "2024"
 version = "4.5.54"
 features = ["derive"]
 
-[dependencies.rscam]
-version = "0.5.5"
+[dependencies.v4l]
+version = "0.14.0"
 
 [lints]
 workspace = true
