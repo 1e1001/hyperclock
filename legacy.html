@@ -185,7 +185,7 @@
 			return n.toString().padStart(d, s);
 		}
 		const day_names = "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(",");
-		const month_names = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(",");
+		const month_names = "Ja'n,Feb,Ma'r,Apr,Ma'y,Jun,Ju'l,Au'g,Sep,Oc't,Nov,De'c".replaceAll("'", "̇").split(",");
 		// vars
 		const wave = window.wave;
 		const elm = [
