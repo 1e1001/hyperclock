@@ -144,14 +144,14 @@
 			</div></td>
 		</tr>
 		<tr class=title_row>
-			<th colspan=2 class=title>zone</th>
+			<th colspan=2 class=title>rate</th>
 			<th>hour</th>
 			<th></th>
 			<th>minute</th>
 			<th colspan=4 class=right>zone</th>
 		</tr>
 		<tr>
-			<td class=short3 id=c_fps>///</td>
+			<td class=short3><span id=c_ftf>////</span><br><span id=c_fps>////</span><br><span id=c_fms>////</span></td>
 			<td class=right id=tz_sign>/</td>
 			<td id=tz_hour>//</td>
 			<td class=narrow>&ratio;</td>
@@ -181,8 +181,8 @@
 				document.exitFullscreen();
 			}
 		}
-		function str(n, d) {
-			return n.toString().padStart(d, "0");
+		function str(n, d, s = "0") {
+			return n.toString().padStart(d, s);
 		}
 		const day_names = "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(",");
 		const month_names = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(",");
@@ -205,6 +205,8 @@
 		const prev = new Array(elm.length);
 		//const prev_frames = [0];
 		let frame_count = 1;
+		let prev_frames = 0;
+		let prev_worst = 999;
 		let scale = 1;
 		let pt = 0;
 		let ptz = [null, null];
@@ -220,7 +222,15 @@
 		// frame
 		function frame(t) {
 			t /= 1000;
-			window.c_fps.innerText = str(Math.round(1 / (t - pt)), 3);
+			const ftf = Math.round(1 / (t - pt));
+			window.c_ftf.innerText = str(ftf, 4, " ");
+			prev_worst = Math.min(prev_worst, ftf);
+			++prev_frames;
+			if (Math.floor(pt) !== Math.floor(t)) {
+				window.c_fps.innerText = str(prev_frames, 4, " ");
+				window.c_fms.innerText = str(prev_worst, 4, " ");
+				prev_frames = 0, prev_worst = 999;
+			}
 			pt = t;
 			//window.c_fps.innerText = str(prev_frames.length, 3);
 			//window.c_fps.innerText = str(Math.round(prev_frames.length / (t - prev_frames[0])), 3);
