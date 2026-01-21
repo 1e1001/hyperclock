@@ -90,9 +90,9 @@
 			max-width: calc(1em / 6);
 			transform: translateX(calc(-1em / 6));
 		}
-		/*.title_row {
+		.hide_title .title_row {
 			display: none;
-		}*/
+		}
 	</style>
 </head>
 <body>
@@ -212,6 +212,10 @@
 		let ptz = [null, null];
 		let running = true;
 		let table_dim = [16, 12];
+		if (location.search === "?nt") {
+			document.body.classList.add("hide_title");
+			table_dim[1] = 9;
+		}
 		function b_pause() {
 			if (running = !running)
 				requestAnimationFrame(frame);
