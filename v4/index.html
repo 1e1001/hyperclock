@@ -12,8 +12,9 @@
 <body class=debug_help>
 	<div id=canvas_margin style=background-color:black><div id=canvas>
 		<div id=face></div>
-		<article id="help">
-			<table>
+		<article id=help>
+			<noscript>hyperclock runs entirely client-side,<br>so it requires JavaScript.</noscript>
+			<table id=help_text style=display:none>
 				<tr><td colspan=2>Keyboard actions:</td></tr>
 				<tr><td><kbd>/</kbd>, <kbd>?</kbd></td><td>This menu</td></tr>
 				<tr><td><kbd>E</kbd></td><td>Config editor</td></tr>
@@ -31,6 +32,7 @@
 				<tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Download</td></tr>
 				<tr><td><kbd>Ctrl</kbd>+<kbd>B</kbd></td><td>Unfocus editor</td></tr>
 			</table>
+			<script>help_text.style.display="table"</script>
 		</article>
 		<div id=timing></div>
 	</div></div>

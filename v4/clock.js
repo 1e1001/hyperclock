@@ -406,7 +406,6 @@ const e_date_use = document.getElementById("date_use");
 /** @type {HTMLInputElement} */
 const e_date_step = document.getElementById("date_step");
 
-
 // Bare minimum for frame() to not error
 const FALLBACK_CONFIG = {
 	canvas: { pages: 1 },
@@ -588,9 +587,9 @@ e_canvas.addEventListener("click", e => {
 });
 function config_editor_save() {
 	if (e_edit_config.value.length) {
-		localStorage.setItem("config", e_edit_config.value);
+		localStorage.setItem("v4_config", e_edit_config.value);
 	} else {
-		localStorage.removeItem("config");
+		localStorage.removeItem("v4_config");
 	}
 }
 function config_editor_apply() {
@@ -633,8 +632,8 @@ e_edit_config.addEventListener("keydown", e => {
 			return e.preventDefault();
 	}
 });
-if (localStorage.getItem("config")) {
-	e_edit_config.value = localStorage.getItem("config");
+if (localStorage.getItem("v4_config")) {
+	e_edit_config.value = localStorage.getItem("v4_config");
 } else {
 	fetch("sample.js").then(r => r.text()).then(t => {
 		e_edit_config.value = t;
