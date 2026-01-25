@@ -634,6 +634,7 @@ e_edit_config.addEventListener("keydown", e => {
 });
 if (localStorage.getItem("v4_config")) {
 	e_edit_config.value = localStorage.getItem("v4_config");
+	reload_config();
 } else {
 	fetch("sample.js").then(r => r.text()).then(t => {
 		e_edit_config.value = t;
@@ -658,7 +659,6 @@ let prev_time = 0;
 let prev_date = null;
 // Stats: count, sum, min, max
 let dt_collection = [0, 0, Infinity, 0];
-reload_config();
 requestAnimationFrame(frame);
 function refresh_face_sizes() {
 	prev_client_size = {};
