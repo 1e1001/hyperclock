@@ -1,0 +1,128 @@
+:root {
+	font-family: "Iosevka Fuck Web", monospace;
+	line-height: 1;
+	height: 100%;
+}
+
+body {
+	display: flex;
+	margin: 0;
+	height: 100%;
+	user-select: none;
+}
+textarea {
+	resize: none;
+	width: 100%;
+	box-sizing: border-box;
+	flex-grow: 1;
+	font: inherit;
+	line-height: 1.2;
+	white-space: pre;
+}
+kbd {
+	font-family: inherit;
+	padding: 0 6px;
+	border: 1px solid black;
+}
+td {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+#canvas_margin {
+	flex: 1 0;
+	overflow: hidden;
+	display: flex;
+	flex-direction: row;
+}
+#canvas {
+	flex: 1 0;
+	position: relative;
+}
+#face {
+	font-weight: 100;
+	position: absolute;
+	left: calc(100% * var(--x));
+	top: calc(100% * var(--y));
+	width: calc(var(--s) * var(--w));
+	height: calc(var(--s) * var(--h));
+	transform: translate(calc(-100% * var(--x)), calc(-100% * var(--y))) scaleX(var(--a));
+}
+#face > * {
+	position: absolute;
+	box-sizing: border-box;
+	left: calc(var(--s) * var(--x));
+	top: calc(var(--s) * var(--y));
+	width: calc(var(--s) * var(--w));
+	height: calc(var(--s) * var(--h));
+	font-size: calc(var(--s) * var(--f));
+}
+#editor {
+	display: none;
+	width: 24em;
+	padding: 0.5em;
+	flex-direction: column;
+	border-left: 1px solid black;
+}
+.editor_flex {
+	display: flex;
+}
+.editor_flex > * {
+	flex: 1 0;
+}
+
+.debug_editor #editor {
+	display: flex;
+}
+
+#help {
+	line-height: 1.5;
+	border: 1px solid black;
+	padding: 0.5em;
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 20em;
+	transform: translate(-50%, -50%);
+	background-color: white;
+}
+#help > table {
+	border-collapse: collapse;
+	table-layout: fixed;
+	flex: 1 0;
+}
+.debug_help #help {
+	display: flex;
+}
+
+#timing {
+	padding: 0.5em;
+	display: none;
+	position: absolute;
+	background-color: white;
+	border-top: 1px solid black;
+	border-right: 1px solid black;
+	left: 0;
+	bottom: 0;
+	/* merge right border */
+	margin-right: -1px;
+}
+.debug_timing #timing {
+	display: block;
+}
+
+.debug_grid #face {
+	border: 1px solid white;
+}
+
+.grid {
+	--w: 1;
+	--h: 1;
+	box-sizing: border-box;
+	border: 1px solid red;
+}
+
+.debug_grid #face > :not(.grid) {
+	background-color: var(--gc, #0f03);
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset=UTF-8>
+	<meta name=viewport content="width=device-width,initial-scale=1.0">
+	<title>hyperclock</title>
+	<link rel=stylesheet href="https://michael.malinov.com/asset/res/font/iosevka-fuck.css">
+	<link rel=stylesheet href=style.css>
+	<script src=tzabbr.js defer></script>
+	<script src=clock.js defer></script>
+</head>
+<body class=debug_help>
+	<div id=canvas_margin style=background-color:black><div id=canvas>
+		<div id=face></div>
+		<article id="help">
+			<table>
+				<tr><td colspan=2>Keyboard actions:</td></tr>
+				<tr><td><kbd>/</kbd>, <kbd>?</kbd></td><td>This menu</td></tr>
+				<tr><td><kbd>E</kbd></td><td>Config editor</td></tr>
+				<tr><td><kbd>B</kbd></td><td>Focus editor</td></tr>
+				<tr><td><kbd>G</kbd></td><td>Debug grids</td></tr>
+				<tr><td><kbd>F</kbd></td><td>Frame timings</td></tr>
+				<tr><td><kbd>P</kbd></td><td>Pause updates</td></tr>
+				<tr><td><kbd>→</kbd>, <kbd>Space</kbd></td><td>Next page</td></tr>
+				<tr><td><kbd>←</kbd></td><td>Previous page</td></tr>
+				<tr><td colspan=2><hr style="border:none;border-top:1px solid black;margin:0.5em -0.5em"></td></tr>
+				<tr><td colspan=2>Editor shortcuts:</td></tr>
+				<tr><td><kbd>Ctrl</kbd>+<kbd>↩</kbd></td><td>Save & Apply</td></tr>
+				<tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>↩</kbd></td><td>Apply</td></tr>
+				<tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>Upload</td></tr>
+				<tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Download</td></tr>
+				<tr><td><kbd>Ctrl</kbd>+<kbd>B</kbd></td><td>Unfocus editor</td></tr>
+			</table>
+		</article>
+		<div id=timing></div>
+	</div></div>
+	<main id=editor>
+		<h1 style=margin:0;font-size:2em;font-weight:400>hyperclock</h1>
+		<p style=margin:0;white-space:pre>v4         by <a href=https://michael.malinov.com/>1e1001</a></p>
+		<p style=margin-bottom:0>Configuration:</p>
+		<textarea id=edit_config></textarea>
+		<span class=editor_flex>
+			<button id=edit_apply title="Attempt to apply the configuration">Apply</button>
+			<button id=edit_save title="Save configuration to localStorage">Save</button>
+			<button id=edit_save_apply title="Save, then apply">S & A</button>
+			<button id=edit_upload title="Load configuration from a file">Upload</button>
+			<button id=edit_download title="Save the configuration to a file">Download</button>
+		</span>
+		<span style=display:none>
+			<input type=file id=dummy_file accept=.js,.txt,application/javascript,text/plain>
+			<a id=dummy_link></a>
+		</span>
+		<span class=editor_flex><input type=datetime-local step=0.001 id=date_time></span>
+		<span>
+			<label for=date_time>Time override</label>
+			<button id=date_now>Now</button>
+			<input type=checkbox id=date_use>
+			<label for=date_use>Use</label>
+			<input type=checkbox id=date_step>
+			<label for=date_step>Step</label>
+		</span>
+		<p style=margin-bottom:0>Status:</p>
+		<textarea id=edit_log readonly></textarea>
+	</main>
+</body>
+</html>
