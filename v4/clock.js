@@ -519,6 +519,9 @@ let debug_grid_elements = [];
 let debug_grid_active = [];
 let debug_pause = false;
 let debug_date_change = false;
+let prev_client_size = {};
+let prev_time = 0;
+let prev_date = null;
 function debug_grid_refresh(show) {
 	while (debug_grid_elements.length)
 		debug_grid_elements.pop().remove();
@@ -654,9 +657,6 @@ e_date_time.addEventListener("input", () => debug_date_change = true);
 e_date_use.addEventListener("input", () => debug_date_change = true);
 //#endregion
 //#region Main loop
-let prev_client_size = {};
-let prev_time = 0;
-let prev_date = null;
 // Stats: count, sum, min, max
 let dt_collection = [0, 0, Infinity, 0];
 requestAnimationFrame(frame);
